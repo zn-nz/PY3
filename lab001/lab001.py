@@ -64,6 +64,10 @@ def format_stock_code(code, code_type=''):
 
 
 def down_all_stocks():
+    """
+    A股所有股票代码导出
+    :return:
+    """
     page = 1
     pageSize = 500
     total = 3000
