@@ -26,6 +26,43 @@ sdgdUrl = 'https://emweb.securities.eastmoney.com/PC_HSF10/ShareholderResearch/P
 sleep_time = 10
 
 
+def format_stock_code(code, code_type=''):
+    """
+    股票代码format
+    默认是600300
+    baostock是sh.600300
+    tushare是000001.SZ
+    with_market是sh600300
+
+    :param code:
+    :param code_type:
+    :return:
+    """
+
+    matchObj = re.findall(r'[0-9]+', code)
+    if len(matchObj) == 0:
+        raise ValueError('code格式错误，不包含任何数字')
+    if len(matchObj[0]) != 6:
+        raise ValueError('code格式错误，不是6位数字:{}'.format(matchObj[0]))
+
+    code = matchObj[0]
+
+    region = "bj"
+    if code.startswith('3') or code.startswith('0'):
+        region = "sz"
+    elif code.startswith('6'):
+        region = "sh"
+
+    if code_type == 'baostock':
+        code = region + "." + code
+    elif code_type == 'tushare':
+        code = code + "." + region.upper()
+    elif code_type == "with_market":
+        code = region.lower() + code
+
+    return code
+
+
 def down_all_stocks():
     page = 1
     pageSize = 500
@@ -35,7 +72,6 @@ def down_all_stocks():
         try:
             new_rul = stocksUrl.format(page=page, pageSize=pageSize)
             content = urlopen(new_rul).read().decode(encoding="utf-8")
-            print(content)
             data = re.sub(r'^.+\(|\)\;$', '', content)
             opt = json.loads(data)['data']
             total = opt['total']
@@ -49,52 +85,56 @@ def down_all_stocks():
 
     df = pd.DataFrame(result)
     df.rename(columns={'f12': '股票代码', 'f14': '股票名称'}, inplace=True)
+    df['股票代码'] = df['股票代码'].apply(format_stock_code, code_type="with_market")
     df.to_csv(all_stocks_path, index=False)
     return result
 
 
 def get_all_stocks():
     try:
-        df = pd.read_csv(all_stocks_path)['股票代码'].tolist()
+        df = pd.read_csv(all_stocks_path).values.tolist()
         return df
     except:
         result = down_all_stocks()
         return result
 
 
-def get_shgd(all_stocks=['sh601800']):
+def get_sdgd(all_stocks=[['sh601800', '中国交建']]):
     result = []
-    years = [2021, 2020, 2012]
+    years = [2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012]
     days = ['12-31',  '09-30', '06-30', '03-31']
-    codeIndex = 0
-    yearIndex = 0
-    dayIndex = 0
-    while(codeIndex < len(all_stocks)):
-        while(yearIndex < len(years)):
-            while(dayIndex < len(days)):
+    stock_index = 0
+    year_index = 0
+    day_index = 0
+    while(stock_index < len(all_stocks)):
+        while(year_index < len(years)):
+            while(day_index < len(days)):
                 try:
-                    code = all_stocks[codeIndex]
-                    year = years[yearIndex]
-                    day = days[dayIndex]
-                    new_rul = sdgdUrl.format(code=code, year=year, day=day)
-                    content = urlopen(new_rul).read().decode(encoding="utf-8")
-                    print(content['sdltgd'])
+                    code = all_stocks[stock_index][0]
+                    year = years[year_index]
+                    day = days[day_index]
+                    new_url = sdgdUrl.format(code=code, year=year, day=day)
+                    print(new_url)
+                    content = urlopen(new_url).read().decode(encoding="utf-8")
+                    sdgd_data = json.loads(content)['sdltgd']
+                    print(content)
+                    print(sdgd_data)
                     print('已拉取股票代码',  code, year, day)
-                    dayIndex += 1
+                    day_index += 1
                 except Exception as e:
                     print('抓取数据报错：', code, year, day, '报错内容：', e)
                 time.sleep(sleep_time/2)
 
-            yearIndex += 1
-            dayIndex = 0
+            year_index += 1
+            day_index = 0
 
-        codeIndex += 1
-        yearIndex = 0
+        stock_index += 1
+        year_index = 0
 
 
 def main():
     allStocks = get_all_stocks()
-    get_shgd(allStocks)
+    get_sdgd(allStocks)
 
 
 main()
