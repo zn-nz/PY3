@@ -8,7 +8,7 @@ from urllib.request import urlopen
 
 
 sleep_time = 10
-root_dir = 'F:\Self\A\py3\data'
+root_dir = 'F:\Self\A\py3\data\data'
 all_stocks_path = os.path.join(root_dir, "all_stocks.csv")
 # A股股票行情
 stocksUrl = 'http://38.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124010265238627388706_1644058020401&pn={page}&pz={pageSize}&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f12,f14&_=1644058020428'

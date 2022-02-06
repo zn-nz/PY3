@@ -61,7 +61,7 @@ def get_sdgd(all_stocks=[['sh600036', '中国交建']]):
 
 def main():
     allStocks = get_all_stocks()
-    get_sdgd()
+    get_sdgd(allStocks)
 
 
 main()
