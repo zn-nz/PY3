@@ -1,4 +1,5 @@
 
+from fileinput import filename
 import os.path
 import re
 import json
@@ -8,8 +9,8 @@ from urllib.request import urlopen
 
 
 sleep_time = 10
-root_dir = 'F:\Self\A\py3\data\data'
-all_stocks_path = os.path.join(root_dir, "all_stocks.csv")
+root_dir = 'F:\Self\A\py3\data{}'
+all_stocks_path = os.path.join(root_dir.format('\data'), "all_stocks.csv")
 # A股股票行情
 stocksUrl = 'http://38.push2.eastmoney.com/api/qt/clist/get?cb=jQuery1124010265238627388706_1644058020401&pn={page}&pz={pageSize}&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f12,f14&_=1644058020428'
 stock_fs = {
@@ -17,6 +18,24 @@ stock_fs = {
     'SZ': 'm:0+t:6,m:0+t:80',
     'BJ': 'm:0+t:81+s:2048',
 }
+
+
+def get_year():
+    return [2012, 2013, 2014, 2015, 2016,  2017, 2018, 2019, 2020, 2021]
+
+
+def get_date():
+    return ['03-31', '06-30', '09-30',  '12-31']
+
+
+def get_date_list(floder_path, code):
+    file_name = root_dir.format('{}\{}.csv'.format(floder_path, code))
+    try:
+        stock_data = pd.read_csv(file_name)['END_DATE'].tolist()
+        return stock_data
+    except Exception as e:
+        print('未找到{}.csv文件'.format(code), e)
+        return []
 
 
 def get_gd_url(lt=False):
