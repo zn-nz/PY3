@@ -57,15 +57,16 @@ def get_sdgd(all_stocks=['sh600000'], start_stock=False):
                             encoding="utf-8")
                         day_index += 1
                         sdgd_data = json.loads(content)['sdltgd']
+                        print('已拉取【{}】{}-{}，{}条信息'.format(code,
+                                                          year, day, len(sdgd_data)))
                         if (len(sdgd_data) > 0):
                             df = pd.DataFrame(sdgd_data)
                             df.to_csv(scv_path, mode=mode,
                                       header=header, index=False)
+                            print('写入', scv_path)
                             mode = 'a'
                             header = False
 
-                        print('已拉取【{}】{}-{}，{}条信息'.format(code,
-                                                          year, day, len(sdgd_data)))
                     except Exception as e:
                         print('抓取数据报错：', code, year, day, '报错内容：', e)
                     time.sleep(sleep_time/3)
@@ -79,7 +80,7 @@ def get_sdgd(all_stocks=['sh600000'], start_stock=False):
 
 def main():
     allStocks = get_all_stocks()
-    start_stock = 'sh600527'
+    start_stock = 'sh600567'
     get_sdgd(allStocks, start_stock)
 
 
