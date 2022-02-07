@@ -47,7 +47,7 @@ def get_gd_url(lt=False):
 
 def get_all_stocks():
     try:
-        df = pd.read_csv(all_stocks_path).values.tolist()
+        df = pd.read_csv(all_stocks_path)['股票代码'].tolist()
         return df
     except:
         result = down_all_stocks()

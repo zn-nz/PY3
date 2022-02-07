@@ -19,14 +19,17 @@ sdgdUrl = get_gd_url()
 sleep_time = 10
 
 
-def get_sdgd(all_stocks=[['sh600000', 'xxx']]):
+def get_sdgd(all_stocks=['sh600000'], start_stock=False):
     years = get_year()
     days = get_date()
     stock_index = 0
     year_index = 0
     day_index = 0
+    if(start_stock):
+        stock_index = all_stocks.index(start_stock)
+
     while(stock_index < len(all_stocks)):
-        code = all_stocks[stock_index][0]
+        code = all_stocks[stock_index]
         scv_path = os.path.join(root_dir.format(
             floder_path), "{}.csv".format(code))
         stock_data = get_date_list(floder_path, code)
@@ -75,7 +78,8 @@ def get_sdgd(all_stocks=[['sh600000', 'xxx']]):
 
 def main():
     allStocks = get_all_stocks()
-    get_sdgd(allStocks)
+    start_stock = 'sh600527'
+    get_sdgd(allStocks, start_stock)
 
 
 main()
