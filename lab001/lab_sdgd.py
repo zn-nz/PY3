@@ -79,7 +79,7 @@ def get_sdgd(all_stocks=['sh600000'], start_stock=False):
 
 def main():
     allStocks = get_all_stocks()
-    start_stock = 'sh600568'
+    start_stock = 'sh600900'
     get_sdgd(allStocks, start_stock)
 
 
